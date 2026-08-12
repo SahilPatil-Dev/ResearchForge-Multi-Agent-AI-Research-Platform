@@ -58,7 +58,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://turbo-telegram-g4v657v959rp2p64q-5173.app.github.dev",
+        "https://researchforge-multi-agent-system.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],

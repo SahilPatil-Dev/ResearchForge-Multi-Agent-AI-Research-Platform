@@ -11,11 +11,6 @@ import type {
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL;
 
-console.log("API URL:", API_BASE_URL);
-console.log(
-  "REGISTER URL:",
-    `${API_BASE_URL}/auth/register`
-    );
 
 if (!API_BASE_URL) {
   console.warn(
