@@ -12,6 +12,7 @@ python-multipart
 
 PyJWT
 pwdlib[argon2]
+psycopg2
 
 requests
 beautifulsoup4
