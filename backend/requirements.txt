@@ -8,6 +8,7 @@ alembic
 
 python-dotenv
 pydantic
+pydantic[email]
 pydantic-settings
 python-multipart
 
