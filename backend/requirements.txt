@@ -10,12 +10,8 @@ pydantic
 pydantic-settings
 python-multipart
 
-passlib[bcrypt]
-python-multipart
-
 PyJWT
-passlib
-bcrypt
+pwdlib[argon2]
 
 requests
 beautifulsoup4
@@ -27,8 +23,7 @@ langchain-core
 langchain-community
 langchain-mistralai
 langgraph
-langgraph-checkpoint
+langsmith
 
 httpx
-
 typing-extensions
