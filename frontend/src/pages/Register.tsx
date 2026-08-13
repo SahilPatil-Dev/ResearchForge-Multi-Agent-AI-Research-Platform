@@ -14,8 +14,6 @@ import {
 
 import { useAuth } from "../context/AuthContext";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL; 
 
 export default function Register() {
   const [name, setName] =
@@ -94,7 +92,7 @@ export default function Register() {
   </div>
 )}
 
-          <div className="space-y-5">
+         <div className="space-y-5">
             <div>
               <label className="mb-2 block text-sm text-white/50">
                 Full name
