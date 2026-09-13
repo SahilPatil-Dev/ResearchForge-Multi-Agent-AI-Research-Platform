@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     MISTRAL_API_KEY: str
     TAVILY_API_KEY: str
 
-    MISTRAL_MODEL: str = "mistral-medium-3-5"
+    MISTRAL_MODEL: str = "codestral-2508"
 
     JWT_SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"
