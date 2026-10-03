@@ -100,6 +100,7 @@ MISTRAL_MODEL=codestral-2508
 JWT_SECRET_KEY=replace-with-a-long-random-secret
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
+FRONTEND_URL=http://localhost:3000
 MAX_SEARCH_RESULTS=5
 MAX_SOURCES_TO_READ=3
 MAX_SCRAPED_CHARS=8000
@@ -147,7 +148,10 @@ npm run dev
 
 Open `http://localhost:3000`. For production, build and start the app with
 `npm run build` and `npm run start`. Set `NEXT_PUBLIC_API_BASE_URL` to the
-deployed API URL at build time.
+deployed API URL at build time. In the Vercel project settings, set it to
+`https://researchforge-multi-agent-system.onrender.com/api/v1` for Production
+(and Preview if needed), then redeploy. The frontend accepts either the API
+root or `/api/v1` URL and normalizes the prefix automatically.
 
 ### Frontend scripts
 
@@ -210,6 +214,7 @@ These settings are defined in `backend/app/core/config.py`:
 | `JWT_SECRET_KEY` | Yes | JWT signing secret |
 | `JWT_ALGORITHM` | No | `HS256` |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | No | `30` |
+| `FRONTEND_URL` | No | Local: `http://localhost:3000`; set to the deployed Vercel origin in production |
 | `MISTRAL_MODEL` | No | `codestral-2508` |
 | `MAX_SEARCH_RESULTS` | No | `5` |
 | `MAX_SOURCES_TO_READ` | No | `3` |
@@ -225,7 +230,8 @@ client defaults to `http://localhost:8000/api/v1`.
   rebuild the Next.js frontend after changing it.
 - Configure the backend CORS allowlist in `backend/app/main.py` to include the
   exact deployed frontend origin. The repository currently includes the
-  existing Vercel origin and local development origins.
+  deployed Vercel origin, `FRONTEND_URL`, the previous Vercel origin, and
+  local development origins.
 - Provide all backend secrets and the production database URL through the
   hosting provider's environment configuration.
 - The current research runner uses FastAPI `BackgroundTasks` and executes

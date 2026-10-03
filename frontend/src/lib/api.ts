@@ -9,9 +9,25 @@ import type {
   UserUpdateRequest,
 } from "../types";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ??
-  "https://researchforge-multi-agent-system.onrender.com/api/v1";
+function normalizeApiBaseUrl(baseUrl: string): string {
+  const normalizedBaseUrl = baseUrl.trim().replace(/\/+$/, "");
+
+  if (!normalizedBaseUrl) {
+    throw new Error("NEXT_PUBLIC_API_BASE_URL must not be empty.");
+  }
+
+  return normalizedBaseUrl.endsWith("/api/v1")
+    ? normalizedBaseUrl
+    : `${normalizedBaseUrl}/api/v1`;
+}
+
+const configuredApiBaseUrl =
+  process.env.NEXT_PUBLIC_API_BASE_URL?.trim() ||
+  (process.env.NODE_ENV === "production"
+    ? "https://researchforge-multi-agent-system.onrender.com/api/v1"
+    : "http://localhost:8000");
+
+const API_BASE_URL = normalizeApiBaseUrl(configuredApiBaseUrl);
 
 async function request<T>(
   endpoint: string,

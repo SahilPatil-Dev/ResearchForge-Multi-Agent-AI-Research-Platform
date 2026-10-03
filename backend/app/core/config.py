@@ -20,7 +20,7 @@ class Settings(BaseSettings):
 
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
-    FRONTEND_URL: str = "http://localhost:5173"
+    FRONTEND_URL: str = "http://localhost:3000"
 
     MAX_SEARCH_RESULTS: int = 5
     MAX_SOURCES_TO_READ: int = 3
