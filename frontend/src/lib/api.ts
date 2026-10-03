@@ -11,7 +11,7 @@ import type {
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ??
-  "http://localhost:8000/api/v1";
+  "https://researchforge-multi-agent-system.onrender.com/api/v1";
 
 async function request<T>(
   endpoint: string,
