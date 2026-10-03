@@ -1,17 +1,19 @@
-import {
-  Outlet,
-} from "react-router-dom";
+"use client";
 
 import Sidebar from "./Sidebar";
 
-export default function AppLayout() {
+export default function AppLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="min-h-screen bg-[#08090d] text-white">
+    <div className="min-h-screen text-white">
       <Sidebar />
 
       <main className="min-h-screen lg:ml-72">
-        <div className="mx-auto max-w-7xl px-5 py-6 sm:px-8 lg:px-10">
-          <Outlet />
+        <div className="mx-auto max-w-7xl px-5 py-3 sm:px-8 sm:py-6 lg:px-10">
+          {children}
         </div>
       </main>
     </div>

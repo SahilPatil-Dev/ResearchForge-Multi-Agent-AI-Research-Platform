@@ -1,10 +1,7 @@
-import {
-  useState,
-} from "react";
+"use client";
 
-import {
-  api,
-} from "../lib/api";
+import { useState } from "react";
+import { api } from "../lib/api";
 
 import {
   useAuth,

@@ -1,9 +1,11 @@
+"use client";
+
 import {
   ArrowRight,
   Sparkles,
 } from "lucide-react";
 
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 import {
   useAuth,
@@ -67,7 +69,7 @@ export default function Dashboard() {
           </div>
 
           <Link
-            to="/history"
+            href="/history"
             className="flex items-center gap-1 text-sm text-white/45 hover:text-white"
           >
             View all
@@ -99,7 +101,7 @@ export default function Dashboard() {
             </p>
 
             <Link
-              to="/research/new"
+              href="/research/new"
               className="mt-6 inline-block rounded-2xl bg-white px-5 py-3 text-sm font-medium text-black"
             >
               Start Research

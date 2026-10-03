@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 export default function NotFound() {
   return (
@@ -13,7 +13,7 @@ export default function NotFound() {
         </p>
 
         <Link
-          to="/"
+          href="/workspace"
           className="mt-6 inline-block rounded-2xl bg-white px-5 py-3 text-sm text-black"
         >
           Back home

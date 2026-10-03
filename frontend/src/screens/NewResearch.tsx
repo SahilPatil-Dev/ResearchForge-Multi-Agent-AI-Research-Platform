@@ -1,10 +1,7 @@
-import {
-  useState,
-} from "react";
+"use client";
 
-import {
-  useNavigate,
-} from "react-router-dom";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import {
   ArrowUp,
@@ -19,8 +16,7 @@ export default function NewResearch() {
   const [topic, setTopic] =
     useState("");
 
-  const navigate =
-    useNavigate();
+  const router = useRouter();
 
   const mutation =
     useCreateResearch();
@@ -32,16 +28,14 @@ export default function NewResearch() {
 
     if (!topic.trim()) return;
 
-    try {
-      const research =
-        await mutation.mutateAsync({
-          topic: topic.trim(),
-        });
-
-      navigate(
-        `/research/${research.id}`
-      );
-    } catch {}
+    mutation.mutate(
+      { topic: topic.trim() },
+      {
+        onSuccess: (research) => {
+          router.push(`/research/${research.id}`);
+        },
+      }
+    );
   };
 
   return (

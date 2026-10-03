@@ -3,20 +3,15 @@ import type {
   RegisterRequest,
   Research,
   ResearchCreateRequest,
+  ResearchProgressEvent,
   TokenResponse,
   User,
   UserUpdateRequest,
 } from "../types";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL;
-
-
-if (!API_BASE_URL) {
-  console.warn(
-    "VITE_API_BASE_URL is not configured."
-  );
-}
+  process.env.NEXT_PUBLIC_API_BASE_URL ??
+  "http://localhost:8000/api/v1";
 
 async function request<T>(
   endpoint: string,
@@ -60,20 +55,31 @@ async function request<T>(
       "Something went wrong.";
 
     try {
-      const error =
-        await response.json();
-
-      if (typeof error.detail === "string") {
-        message = error.detail;
-      } else if (
-        Array.isArray(error.detail)
+      const error: unknown = await response.json();
+      if (
+        error &&
+        typeof error === "object" &&
+        "detail" in error
       ) {
-        message = error.detail
-          .map(
-            (item: any) =>
-              item.msg
-          )
-          .join(", ");
+        const detail = error.detail;
+        if (typeof detail === "string") {
+          message = detail;
+        } else if (Array.isArray(detail)) {
+          message = detail
+            .map((item: unknown) => {
+              if (
+                item &&
+                typeof item === "object" &&
+                "msg" in item &&
+                typeof item.msg === "string"
+              ) {
+                return item.msg;
+              }
+              return "";
+            })
+            .filter(Boolean)
+            .join(", ");
+        }
       }
     } catch {
       message = response.statusText;
@@ -194,6 +200,68 @@ export const api = {
     return request<Research>(
       `/research/${id}`
     );
+  },
+
+  async streamResearchEvents(
+    id: number,
+    signal: AbortSignal,
+    onEvent: (event: ResearchProgressEvent) => void
+  ) {
+    const token = localStorage.getItem("access_token");
+    const headers = new Headers({
+      Accept: "text/event-stream",
+    });
+
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+
+    const response = await fetch(
+      `${API_BASE_URL}/research/${id}/events`,
+      {
+        headers,
+        signal,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Live research updates failed (${response.status}).`
+      );
+    }
+    if (!response.body) {
+      throw new Error(
+        "The server did not provide a research event stream."
+      );
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+
+      let boundary = buffer.indexOf("\n\n");
+      while (boundary !== -1) {
+        const frame = buffer.slice(0, boundary);
+        buffer = buffer.slice(boundary + 2);
+        const data = frame
+          .split("\n")
+          .filter((line) => line.startsWith("data:"))
+          .map((line) => line.slice(5).trim())
+          .join("\n");
+
+        if (data) {
+          onEvent(
+            JSON.parse(data) as ResearchProgressEvent
+          );
+        }
+        boundary = buffer.indexOf("\n\n");
+      }
+    }
   },
 
   getResearchHistory() {

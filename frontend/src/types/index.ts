@@ -30,12 +30,18 @@ export interface Research {
   id: number;
   topic: string;
   status: ResearchStatus;
+  progress_message: string | null;
   error_message: string | null;
   report: string | null;
   feedback: string | null;
   score: number | null;
   created_at: string;
   completed_at: string | null;
+}
+
+export interface ResearchProgressEvent {
+  status: ResearchStatus;
+  progress_message: string | null;
 }
 
 export interface UserUpdateRequest {

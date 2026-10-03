@@ -19,6 +19,8 @@ class ResearchResponse(BaseModel):
 
     status: str
 
+    progress_message: str | None = None
+
     error_message: str | None = None
 
     report: str | None = None

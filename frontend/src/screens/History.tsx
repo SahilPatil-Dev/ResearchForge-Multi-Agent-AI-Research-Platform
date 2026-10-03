@@ -1,11 +1,7 @@
-import {
-  Search,
-} from "lucide-react";
+"use client";
 
-import {
-  useMemo,
-  useState,
-} from "react";
+import { Search } from "lucide-react";
+import { useMemo, useState } from "react";
 
 import {
   useResearchHistory,

@@ -1,15 +1,13 @@
+"use client";
+
 import {
   ArrowLeft,
   Calendar,
   Copy,
   Trash2,
 } from "lucide-react";
-
-import {
-  Link,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 
 import {
   useResearch,
@@ -21,15 +19,9 @@ import ResearchStatus from "../components/research/ResearchStatus";
 import ReportView from "../components/research/ReportView";
 
 export default function ResearchDetail() {
-  const {
-    id,
-  } = useParams();
-
-  const navigate =
-    useNavigate();
-
-  const researchId =
-    Number(id);
+  const params = useParams<{ id: string }>();
+  const researchId = Number(params.id);
+  const router = useRouter();
 
   const {
     data: research,
@@ -65,7 +57,7 @@ export default function ResearchDetail() {
         </p>
 
         <Link
-          to="/"
+          href="/workspace"
           className="mt-6 inline-block rounded-2xl bg-white px-5 py-3 text-sm text-black"
         >
           Back to Dashboard
@@ -87,13 +79,13 @@ export default function ResearchDetail() {
         research.id
       );
 
-      navigate("/history");
+      router.push("/history");
     };
 
   return (
     <div className="space-y-6">
       <Link
-        to="/history"
+        href="/history"
         className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white"
       >
         <ArrowLeft size={16} />
@@ -156,7 +148,9 @@ export default function ResearchDetail() {
         research.status !==
           "failed" && (
           <ResearchStatus
+            researchId={research.id}
             status={research.status}
+            initialMessage={research.progress_message}
           />
         )}
 

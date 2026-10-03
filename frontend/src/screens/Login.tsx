@@ -1,11 +1,8 @@
-import {
-  useState,
-} from "react";
+"use client";
 
-import {
-  Link,
-  useNavigate,
-} from "react-router-dom";
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import {
   ArrowRight,
@@ -14,11 +11,7 @@ import {
 
 import { useAuth } from "../context/AuthContext";
 
-
-export default function Register() {
-  const [name, setName] =
-    useState("");
-
+export default function Login() {
   const [email, setEmail] =
     useState("");
 
@@ -32,11 +25,10 @@ export default function Register() {
     useState(false);
 
   const {
-    register,
+    login,
   } = useAuth();
 
-  const navigate =
-    useNavigate();
+  const router = useRouter();
 
   const submit = async (
     e: React.FormEvent
@@ -47,18 +39,24 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await register(
+      await login(
         email,
-        name,
         password
       );
 
-      navigate("/login");
+      const nextPath = new URLSearchParams(
+        window.location.search
+      ).get("next");
+      router.push(
+        nextPath?.startsWith("/") && !nextPath.startsWith("//")
+          ? nextPath
+          : "/workspace"
+      );
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
-          : "Registration failed."
+          : "Login failed."
       );
     } finally {
       setLoading(false);
@@ -74,11 +72,11 @@ export default function Register() {
           </div>
 
           <h1 className="text-3xl font-semibold">
-            Create your account
+            Welcome back
           </h1>
 
           <p className="mt-2 text-sm text-white/40">
-            Start building your research workspace.
+            Continue your research workspace.
           </p>
         </div>
 
@@ -86,29 +84,13 @@ export default function Register() {
           onSubmit={submit}
           className="glass rounded-3xl p-6 sm:p-8"
         >
-        {error && (
-  <div className="error-message">
-    {error}
-  </div>
-)}
-
-         <div className="space-y-5">
-            <div>
-              <label className="mb-2 block text-sm text-white/50">
-                Full name
-              </label>
-
-              <input
-                value={name}
-                onChange={(e) =>
-                  setName(e.target.value)
-                }
-                required
-                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-white/25"
-                placeholder="Sahil Patil"
-              />
+          {error && (
+            <div className="mb-5 rounded-2xl border border-red-400/10 bg-red-400/5 p-3 text-sm text-red-300">
+              {error}
             </div>
+          )}
 
+          <div className="space-y-5">
             <div>
               <label className="mb-2 block text-sm text-white/50">
                 Email
@@ -121,7 +103,7 @@ export default function Register() {
                   setEmail(e.target.value)
                 }
                 required
-                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-white/25"
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 outline-none transition focus:border-white/25"
                 placeholder="you@example.com"
               />
             </div>
@@ -137,10 +119,9 @@ export default function Register() {
                 onChange={(e) =>
                   setPassword(e.target.value)
                 }
-                minLength={8}
                 required
-                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-white/25"
-                placeholder="Minimum 8 characters"
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 outline-none transition focus:border-white/25"
+                placeholder="••••••••"
               />
             </div>
 
@@ -149,8 +130,8 @@ export default function Register() {
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-3.5 font-medium text-black disabled:opacity-50"
             >
               {loading
-                ? "Creating account..."
-                : "Create account"}
+                ? "Signing in..."
+                : "Sign in"}
 
               {!loading && (
                 <ArrowRight size={17} />
@@ -159,12 +140,12 @@ export default function Register() {
           </div>
 
           <p className="mt-6 text-center text-sm text-white/35">
-            Already have an account?{" "}
+            Don't have an account?{" "}
             <Link
-              to="/login"
+              href="/register"
               className="text-white hover:underline"
             >
-              Sign in
+              Create one
             </Link>
           </p>
         </form>

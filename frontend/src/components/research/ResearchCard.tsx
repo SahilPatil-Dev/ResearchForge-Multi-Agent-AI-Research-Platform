@@ -3,9 +3,7 @@ import {
   Clock,
 } from "lucide-react";
 
-import {
-  Link,
-} from "react-router-dom";
+import Link from "next/link";
 
 import type {
   Research,
@@ -22,9 +20,7 @@ export default function ResearchCard({
   research,
 }: Props) {
   return (
-    <Link
-      to={`/research/${research.id}`}
-    >
+    <Link href={`/research/${research.id}`}>
       <GlassCard className="glass-hover group h-full p-5">
         <div className="mb-5 flex items-center justify-between">
           <StatusBadge

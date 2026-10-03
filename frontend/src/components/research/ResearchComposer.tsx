@@ -1,13 +1,9 @@
-import {
-  ArrowUp,
-  Sparkles,
-} from "lucide-react";
+"use client";
 
-import {
-  useState,
-} from "react";
+import { ArrowUp, Sparkles } from "lucide-react";
+import { useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 import {
   useCreateResearch,
@@ -19,8 +15,7 @@ export default function ResearchComposer() {
   const [topic, setTopic] =
     useState("");
 
-  const navigate =
-    useNavigate();
+  const router = useRouter();
 
   const createResearch =
     useCreateResearch();
@@ -40,7 +35,7 @@ export default function ResearchComposer() {
           }
         );
 
-      navigate(
+      router.push(
         `/research/${research.id}`
       );
     } catch {

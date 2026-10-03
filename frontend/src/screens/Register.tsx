@@ -1,11 +1,8 @@
-import {
-  useState,
-} from "react";
+"use client";
 
-import {
-  Link,
-  useNavigate,
-} from "react-router-dom";
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import {
   ArrowRight,
@@ -14,7 +11,11 @@ import {
 
 import { useAuth } from "../context/AuthContext";
 
-export default function Login() {
+
+export default function Register() {
+  const [name, setName] =
+    useState("");
+
   const [email, setEmail] =
     useState("");
 
@@ -28,11 +29,10 @@ export default function Login() {
     useState(false);
 
   const {
-    login,
+    register,
   } = useAuth();
 
-  const navigate =
-    useNavigate();
+  const router = useRouter();
 
   const submit = async (
     e: React.FormEvent
@@ -43,17 +43,18 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await login(
+      await register(
         email,
+        name,
         password
       );
 
-      navigate("/");
+      router.push("/login");
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
-          : "Login failed."
+          : "Registration failed."
       );
     } finally {
       setLoading(false);
@@ -69,11 +70,11 @@ export default function Login() {
           </div>
 
           <h1 className="text-3xl font-semibold">
-            Welcome back
+            Create your account
           </h1>
 
           <p className="mt-2 text-sm text-white/40">
-            Continue your research workspace.
+            Start building your research workspace.
           </p>
         </div>
 
@@ -81,13 +82,29 @@ export default function Login() {
           onSubmit={submit}
           className="glass rounded-3xl p-6 sm:p-8"
         >
-          {error && (
-            <div className="mb-5 rounded-2xl border border-red-400/10 bg-red-400/5 p-3 text-sm text-red-300">
-              {error}
-            </div>
-          )}
+        {error && (
+  <div className="error-message">
+    {error}
+  </div>
+)}
 
-          <div className="space-y-5">
+         <div className="space-y-5">
+            <div>
+              <label className="mb-2 block text-sm text-white/50">
+                Full name
+              </label>
+
+              <input
+                value={name}
+                onChange={(e) =>
+                  setName(e.target.value)
+                }
+                required
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-white/25"
+                placeholder="Sahil Patil"
+              />
+            </div>
+
             <div>
               <label className="mb-2 block text-sm text-white/50">
                 Email
@@ -100,7 +117,7 @@ export default function Login() {
                   setEmail(e.target.value)
                 }
                 required
-                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 outline-none transition focus:border-white/25"
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-white/25"
                 placeholder="you@example.com"
               />
             </div>
@@ -116,9 +133,10 @@ export default function Login() {
                 onChange={(e) =>
                   setPassword(e.target.value)
                 }
+                minLength={8}
                 required
-                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 outline-none transition focus:border-white/25"
-                placeholder="••••••••"
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-white/25"
+                placeholder="Minimum 8 characters"
               />
             </div>
 
@@ -127,8 +145,8 @@ export default function Login() {
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-3.5 font-medium text-black disabled:opacity-50"
             >
               {loading
-                ? "Signing in..."
-                : "Sign in"}
+                ? "Creating account..."
+                : "Create account"}
 
               {!loading && (
                 <ArrowRight size={17} />
@@ -137,12 +155,12 @@ export default function Login() {
           </div>
 
           <p className="mt-6 text-center text-sm text-white/35">
-            Don't have an account?{" "}
+            Already have an account?{" "}
             <Link
-              to="/register"
+              href="/login"
               className="text-white hover:underline"
             >
-              Create one
+              Sign in
             </Link>
           </p>
         </form>

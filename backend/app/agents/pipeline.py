@@ -1,6 +1,7 @@
 import re
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
+from urllib.parse import urlparse
 
 from app.agents.agents import (
     build_reader_agent,
@@ -206,14 +207,22 @@ Requirements:
 
 def run_reader(
     state: ResearchState,
+    on_progress: Callable[[str], None] | None = None,
 ) -> ResearchState:
 
     if not state.urls:
+        if on_progress:
+            on_progress("No source URLs were returned by search.")
         return state
 
     reader_agent = build_reader_agent()
 
-    for url in state.urls:
+    for index, url in enumerate(state.urls, start=1):
+        if on_progress:
+            host = urlparse(url).netloc or url
+            on_progress(
+                f"Reading source {index} of {len(state.urls)}: {host}"
+            )
 
         prompt = f"""
 Analyze this research source:
@@ -243,6 +252,7 @@ Rules:
 4. Do not write the final report.
 """
 
+        source_read = False
         try:
             result = reader_agent.invoke(
                 {
@@ -270,6 +280,7 @@ SOURCE ANALYSIS:
 {content}
 """.strip()
             )
+            source_read = True
 
         except Exception as exc:
             state.scraped_sources.append(
@@ -283,6 +294,15 @@ FAILED
 ERROR:
 {exc}
 """.strip()
+            )
+
+        if on_progress:
+            on_progress(
+                (
+                    f"Read source {index} of {len(state.urls)}: {host}"
+                    if source_read
+                    else f"Source {index} of {len(state.urls)} could not be read: {host}"
+                )
             )
 
     return state
@@ -419,6 +439,7 @@ def run_revision(
 
 def run_research_pipeline(
     topic: str,
+    on_progress: Callable[[str], None] | None = None,
 ) -> dict:
 
     if not isinstance(topic, str):
@@ -438,12 +459,22 @@ def run_research_pipeline(
     )
 
     try:
+        if on_progress:
+            on_progress("Searching the web for relevant sources.")
         state = run_search(state)
 
-        state = run_reader(state)
+        if on_progress:
+            on_progress(
+                f"Search complete; found {len(state.urls)} source(s) to review."
+            )
+        state = run_reader(state, on_progress)
 
+        if on_progress:
+            on_progress("Writing an evidence-based synthesis.")
         state = run_writer(state)
 
+        if on_progress:
+            on_progress("Reviewing the draft for quality and evidence.")
         state = run_critic(state)
 
         max_revisions = max(
@@ -451,15 +482,24 @@ def run_research_pipeline(
             settings.MAX_REVISIONS,
         )
 
-        for _ in range(max_revisions):
+        for revision_number in range(1, max_revisions + 1):
 
             if state.score >= 8:
                 break
 
+            if on_progress:
+                on_progress(
+                    f"Revising the report after quality review "
+                    f"(revision {revision_number} of {max_revisions})."
+                )
             state = run_revision(state)
 
+            if on_progress:
+                on_progress("Reviewing the revised report.")
             state = run_critic(state)
 
+        if on_progress:
+            on_progress("Research complete; the report is ready.")
         return {
             "topic": state.topic,
             "sources": state.urls,

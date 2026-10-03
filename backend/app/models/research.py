@@ -38,6 +38,11 @@ class ResearchJob(Base):
         nullable=False,
     )
 
+    progress_message: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
     report: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,

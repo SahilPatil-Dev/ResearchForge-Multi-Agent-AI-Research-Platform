@@ -42,35 +42,30 @@ export function AuthProvider({
   const [loading, setLoading] =
     useState(true);
 
-  const loadUser = async () => {
-    const token =
-      localStorage.getItem(
-        "access_token"
-      );
-
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const currentUser =
-        await api.getMe();
-
-      setUser(currentUser);
-    } catch {
-      localStorage.removeItem(
-        "access_token"
-      );
-
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadUser();
+    let active = true;
+
+    const restoreUser = async () => {
+      const token = localStorage.getItem("access_token");
+      if (!token) return null;
+
+      try {
+        return await api.getMe();
+      } catch {
+        localStorage.removeItem("access_token");
+        return null;
+      }
+    };
+
+    void restoreUser().then((currentUser) => {
+      if (!active) return;
+      setUser(currentUser);
+      setLoading(false);
+    });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const login = async (
