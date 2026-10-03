@@ -58,7 +58,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
- "https://research-forge-multi-agent-research-platform.vercel.app",
+ "https://research-forge-multi-agent-ai-research-platform-dc1mbpbag.vercel.app",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:5173",
