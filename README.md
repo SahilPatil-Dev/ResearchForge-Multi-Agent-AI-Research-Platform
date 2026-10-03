@@ -9,7 +9,7 @@ shows progress messages emitted by the actual backend pipeline.
 > material and verify important claims, especially before making high-impact
 > decisions. A critic score is feedback, not a guarantee of correctness.
 
-**Live application:** https://researchforge-multi-agent-system.vercel.app/
+**Live application:** https://research-forge-multi-agent-ai-resea.vercel.app/
 
 ## What it does
 
